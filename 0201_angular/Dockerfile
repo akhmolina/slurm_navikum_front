@@ -17,18 +17,14 @@ RUN npm run build-storybook
 # test
 FROM source as test
 
+ENV CHROMIUM_FLAGS=--no-sandbox
 ENV CHROME_BIN=/usr/bin/google-chrome
 ENV CI=true
-RUN groupadd --system chrome && \
-    useradd --system --create-home --gid chrome --groups audio,video chrome && \
-    mkdir --parents /home/chrome/reports && \
-    chown --recursive chrome:chrome /home/chrome
 
 RUN apt-get update && apt-get install -y wget
 RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 RUN apt-get install -y ./google-chrome-stable_current_amd64.deb
 
-USER chrome
 RUN npm run test; status=$? 2>&1 | tee testreport && \
     echo $status
 
