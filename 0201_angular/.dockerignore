@@ -1,0 +1,15 @@
+dist
+node_modules
+coverage
+data
+volumes
+.dockerignore
+.git
+.gitignore
+.gitattributes
+.vs
+.vscode
+**/.toolstarget
+
+# storybook local build out
+**/storybook-static
