@@ -24,12 +24,14 @@ RUN apt-get update && apt-get install -y wget
 RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 RUN apt-get install -y ./google-chrome-stable_current_amd64.deb
 
-RUN npm run test | tee testreport
+RUN npm run test 2>&1 | tee testreport && \
+    echo ${PIPESTATUS[0]}
 
 # lint
 FROM source as lint
 
-RUN npm run lint | tee lintresult
+RUN npm run lint 2>&1 | tee lintresult && \
+    echo ${PIPESTATUS[0]}
 
 # run
 FROM nginx:1.22 as final
