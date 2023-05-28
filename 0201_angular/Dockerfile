@@ -23,7 +23,9 @@ ENV CHROME_BIN=/usr/bin/chromium
 ENV CHROME_PATH=/usr/lib/chromium/
 ENV CI=true
 
-RUN apt-get update && apt-get install -y chromium
+RUN apt-get update && apt-get install -y chromium dbus
+RUN mkdir -p /var/run/dbus && \
+    dbus-daemon --config-file=/usr/share/dbus-1/system.conf --print-address
 # RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 # RUN apt-get install -y ./google-chrome-stable_current_amd64.deb
 
