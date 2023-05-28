@@ -17,7 +17,8 @@ RUN npm run build-storybook
 # test
 FROM source as test
 
-ENV CHROMIUM_FLAGS=--no-sandbox
+# ENV CHROMIUM_FLAGS=--no-sandbox
+ENV CHROME_DEVEL_SANDBOX=
 ENV CHROME_BIN=/usr/bin/google-chrome
 ENV CI=true
 
@@ -25,20 +26,20 @@ RUN apt-get update && apt-get install -y wget
 RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 RUN apt-get install -y ./google-chrome-stable_current_amd64.deb
 
-RUN npm run test; status=$? 2>&1 | tee testreport && \
-    echo $status
+RUN npm run test
+RUN touch .test
 
 # lint
 FROM source as lint
 
-RUN npm run lint; status=$? 2>&1 | tee lintresult && \
-    echo $status
+RUN npm run lint
+RUN touch .lint
 
 # run
 FROM nginx:1.22 as final
 
-COPY --from=lint /ng-app/lintresult /ng-app/lintresult
-COPY --from=test /ng-app/testreport /ng-app/testreport
+COPY --from=lint /ng-app/.lint /ng-app/.lint
+COPY --from=test /ng-app/.test /ng-app/.test
 RUN rm -rf /usr/share/nginx/html/*
 COPY --from=builder --chown=nginx:nginx /ng-app/storybook-static /usr/share/nginx/html
 COPY nginx/default.conf /etc/nginx/conf.d/
