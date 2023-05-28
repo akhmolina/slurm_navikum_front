@@ -22,10 +22,17 @@ RUN mkdir /etc/nginx/keys/ && \
     -newkey rsa:4096 -keyout /etc/nginx/keys/server.key -out /etc/nginx/keys/server.crt && \
     chown nginx:nginx /etc/nginx/keys
 
-RUN rm -rf /usr/share/nginx/html/*
+RUN rm -rf /usr/share/nginx/html/* && rm -f /etc/nginx/conf.d/default.conf
 COPY --from=builder --chown=nginx:nginx /ng-app/build /usr/share/nginx/html
 COPY nginx/default.conf.template /etc/nginx/templates/default.conf.template
 
-EXPOSE 8080
-EXPOSE 8443
-CMD nginx -g 'daemon off;'
+ENV NGINX_ENVSUBST_TEMPLATE_DIR=/etc/nginx/templates
+ENV NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx/conf.d
+ENV NGINX_ENVSUBST_TEMPLATE_SUFFIX=.template
+ENV BACKEND_URL=http://host.docker.internal:9999
+ENV FRONT_HTTP_PORT=8080
+ENV FRONT_HTTPS_PORT=8443
+ENV FRONT_HOST=localhost
+
+EXPOSE $FRONT_HTTP_PORT
+EXPOSE $FRONT_HTTPS_PORT

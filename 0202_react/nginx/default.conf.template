@@ -1,20 +1,12 @@
 
 
 server {
-  listen 8443 ssl http2 default_server;
-  listen [::]:8443 ssl http2 default_server;
+  listen ${FRONT_HTTPS_PORT} ssl http2;
+  listen [::]:${FRONT_HTTPS_PORT} ssl http2;
+  server_name ${FRONT_HOST};
   ssl_certificate /etc/nginx/keys/server.crt;
   ssl_certificate_key /etc/nginx/keys/server.key;
   ssl_protocols TLSv1.3;
-
-  gzip on;
-  gzip_http_version 1.1;
-  gzip_disable      "MSIE [1-6]\.";
-  gzip_min_length   1100;
-  gzip_vary         on;
-  gzip_proxied      expired no-cache no-store private auth;
-  gzip_types        text/plain text/css application/json application/javascript application/x-javascript text/xml application/xml application/xml+rss text/javascript;
-  gzip_comp_level   9;
 
   root /usr/share/nginx/html;
   index index.html;
@@ -29,14 +21,14 @@ server {
     proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header Connection "";
     proxy_http_version 1.1;
-    # rewrite /api/(.*) /$1 break; #cut /api prefix from request
-    proxy_pass http://host.docker.internal:9999;
+    rewrite /api/(.*) /$1 break; #cut /api prefix from request
+    proxy_pass ${BACKEND_URL};
   }
 }
 
 server {
-    listen 8080 default_server;
-    listen [::]:8080; 
-
-    return 301 https://$host:8443$request_uri;
+    listen ${FRONT_HTTP_PORT};
+    listen [::]:${FRONT_HTTP_PORT};
+    server_name ${FRONT_HOST};
+    return 301 https://$host:${FRONT_HTTPS_PORT}$request_uri;
 }
