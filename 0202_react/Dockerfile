@@ -26,5 +26,6 @@ RUN rm -rf /usr/share/nginx/html/*
 COPY --from=builder --chown=nginx:nginx /ng-app/build /usr/share/nginx/html
 COPY nginx/default.conf.template /etc/nginx/templates/default.conf.template
 
-EXPOSE 8080:8443
+EXPOSE 8080
+EXPOSE 8443
 CMD nginx -g 'daemon off;'
