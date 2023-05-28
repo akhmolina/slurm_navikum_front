@@ -19,13 +19,14 @@ FROM source as test
 
 # ENV CHROMIUM_FLAGS=--no-sandbox
 ENV CHROMIUM_FLAGS="--no-sandbox --headless"
-ENV CHROME_BIN=/usr/bin/chromium-browser
+ENV CHROME_BIN=/usr/bin/chromium
 ENV CHROME_PATH=/usr/lib/chromium/
 ENV CI=true
 
 RUN apt-get update && apt-get install -y chromium
 # RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 # RUN apt-get install -y ./google-chrome-stable_current_amd64.deb
+
 RUN npm run test
 RUN touch .test
 
