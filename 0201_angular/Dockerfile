@@ -18,7 +18,7 @@ RUN npm run build-storybook
 FROM source as test
 
 # ENV CHROMIUM_FLAGS=--no-sandbox
-ENV CHROMIUM_FLAGS="--no-sandbox --headless --disable-setuid-sandbox --disable-gpu --disable-software-rasterizer"
+ENV CHROMIUM_FLAGS="--no-sandbox --headless --disable-setuid-sandbox --disable-gpu --disable-software-rasterizer --single-process"
 ENV CHROME_BIN=/usr/bin/chromium
 ENV CHROME_PATH=/usr/lib/chromium/
 ENV CI=true
