@@ -18,8 +18,7 @@ RUN npm run build-storybook
 FROM source as test
 
 # ENV CHROMIUM_FLAGS=--no-sandbox
-ENV CHROME_DEVEL_SANDBOX=
-ENV CHROME_BIN=/usr/bin/google-chrome
+ENV CHROME_BIN="/usr/bin/google-chrome --no-sandbox --headless"
 ENV CI=true
 
 RUN apt-get update && apt-get install -y wget
