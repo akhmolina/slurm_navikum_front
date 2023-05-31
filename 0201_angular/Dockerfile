@@ -24,8 +24,7 @@ ENV CI=true
 
 RUN apt-get update && apt-get install --no-install-recommends -y chromium
 
-RUN npm run test
-RUN touch .test
+RUN npm run test --code-coverage --watch=false
 
 # lint
 FROM source as lint
@@ -37,7 +36,7 @@ RUN touch .lint
 FROM nginx:1.22 as final
 
 COPY --from=lint /ng-app/.lint /ng-app/.lint
-COPY --from=test /ng-app/.test /ng-app/.test
+COPY --from=test /ng-app/coverage /ng-app/coverage
 RUN rm -rf /usr/share/nginx/html/*
 COPY --from=builder --chown=nginx:nginx /ng-app/storybook-static /usr/share/nginx/html
 COPY nginx/default.conf /etc/nginx/conf.d/
