@@ -17,16 +17,14 @@ RUN npm run build-storybook
 # test
 FROM source as test
 
-ENV CHROMIUM_FLAGS="--no-sandbox --headless --disable-setuid-sandbox --disable-gpu --disable-software-rasterizer --disable-dev-shm-usage --disable-audio-output --dbus-stub --single-process"
+ENV CHROMIUM_FLAGS="--no-sandbox --headless --remote-debugging-port=9222"
 ENV CHROME_BIN=/usr/bin/chromium
 ENV CHROME_PATH=/usr/lib/chromium/
 ENV CI=true
 
-RUN apt-get update && apt-get install -y xvfb dbus chromium
-RUN mkdir -p /var/run/dbus && \
-    dbus-daemon --config-file=/usr/share/dbus-1/system.conf --print-address
+RUN apt-get update && apt-get install --no-install-recommends -y chromium
 
-RUN xvfb-run npm run test
+RUN npm run test
 RUN touch .test
 
 # lint
